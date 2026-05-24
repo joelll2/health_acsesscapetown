@@ -291,7 +291,7 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
   background: var(--cream);
 }
 .map-topbar {
-  position: absolute; top: 60px; left: 0; right: 0; z-index: 1000;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 1000;
   height: 50px; background: rgba(245,240,232,0.94);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(44,74,62,0.08);
@@ -317,9 +317,9 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 .mbtn-p { background: var(--green); color: white; border-color: var(--green); }
 .mbtn-p:hover { background: var(--green-dark); }
 
-#main-map { position: absolute; top: 110px; left: 0; right: 0; bottom: 0; width: 100%; }
+#main-map { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; width: 100%; }
 #main-map .leaflet-container { width: 100% !important; height: 100% !important; }
-.map-overlays { position: absolute; top: 110px; left: 0; right: 0; bottom: 0; z-index: 800; pointer-events: none; }
+.map-overlays { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; z-index: 800; pointer-events: none; }
 .map-overlays > * { pointer-events: auto; }
 
 /* Leaflet Overrides — Organic Theme */
