@@ -64,9 +64,13 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
   border-bottom: 1px solid rgba(44,74,62,0.08);
   padding: 0 40px; height: 60px;
   display: flex; align-items: center; justify-content: space-between;
-  transition: all 0.3s;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.3s, box-shadow 0.3s;
 }
+.nav.autohide { transform: translateY(-100%); }
+.nav.autohide.peek { transform: translateY(0); }
 .nav.scrolled { background: rgba(245,240,232,0.97); box-shadow: 0 2px 20px rgba(44,74,62,0.08); }
+.nav-trigger { position: fixed; top: 0; left: 0; right: 0; height: 18px; z-index: 8999; display: none; }
+.nav-trigger.active { display: block; }
 .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--green-dark); }
 .nav-logo { width: 32px; height: 32px; background: var(--green); border-radius: var(--r1); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
 .nav-name { font-family: var(--fs); font-weight: 700; font-size: 14px; letter-spacing: -0.3px; }
@@ -950,8 +954,48 @@ async function loadLayers(){
   document.getElementById('tb-kl').textContent=kc;
 }
 
-// ── UI: Navbar scroll ────────────────────
-window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);});
+// ── UI: Navbar auto-hide on map section ──
+const navEl=document.getElementById('navbar');
+const trigEl=document.createElement('div');
+trigEl.className='nav-trigger';
+document.body.appendChild(trigEl);
+let inMapSection=false;
+let peekTimeout=null;
+
+// Detect if map section is in view
+const navObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    inMapSection=e.isIntersecting && e.intersectionRatio>0.5;
+    if(inMapSection){
+      navEl.classList.add('autohide');
+      trigEl.classList.add('active');
+    } else {
+      navEl.classList.remove('autohide','peek');
+      trigEl.classList.remove('active');
+      if(peekTimeout) clearTimeout(peekTimeout);
+    }
+  });
+},{threshold:[0,0.5,1]});
+navObs.observe(document.getElementById('peta'));
+
+// Show navbar when cursor at top
+trigEl.addEventListener('mouseenter',()=>{
+  if(inMapSection){
+    navEl.classList.add('peek');
+    if(peekTimeout) clearTimeout(peekTimeout);
+  }
+});
+navEl.addEventListener('mouseleave',()=>{
+  if(inMapSection){
+    peekTimeout=setTimeout(()=>navEl.classList.remove('peek'),400);
+  }
+});
+navEl.addEventListener('mouseenter',()=>{
+  if(peekTimeout) clearTimeout(peekTimeout);
+});
+
+// Also handle scroll for other sections
+window.addEventListener('scroll',()=>{navEl.classList.toggle('scrolled',window.scrollY>20);});
 
 // ── UI: Reset View ───────────────────────
 document.getElementById('btn-reset').onclick=()=>{
