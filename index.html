@@ -271,6 +271,12 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 .ml-item { display: flex; align-items: center; gap: 12px; padding: 7px 0; font-size: 12.5px; color: var(--text2); }
 .ml-sw { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
 .ml-sw.circle { border-radius: 50%; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.5); }
+.ml-sw.rs-cross { border-radius: 50%; width: 16px; height: 16px; background: #c0392b; border: none; position: relative; box-shadow: 0 1px 3px rgba(192,57,43,0.3); }
+.ml-sw.rs-cross::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 2.5px; background: white; border-radius: 1px; }
+.ml-sw.rs-cross::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 2.5px; height: 8px; background: white; border-radius: 1px; }
+.ml-sw.kl-cross { border-radius: 50%; width: 16px; height: 16px; background: #2980b9; border: none; position: relative; box-shadow: 0 1px 3px rgba(41,128,185,0.3); }
+.ml-sw.kl-cross::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 8px; height: 2.5px; background: white; border-radius: 1px; }
+.ml-sw.kl-cross::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 2.5px; height: 8px; background: white; border-radius: 1px; }
 .ml-sw.line { width: 24px; height: 3px; border-radius: 2px; border: none; }
 .ml-sw.outline { background: transparent !important; border: 2px solid; }
 .ml-div { height: 1px; background: rgba(44,74,62,0.08); margin: 8px 0; }
@@ -384,6 +390,12 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 .mli { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 11.5px; color: var(--text2); }
 .mlsw { width: 15px; height: 15px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.05); }
 .mlsw.c { border-radius: 50%; width: 12px; height: 12px; }
+.mlsw.rs { border-radius: 50%; width: 14px; height: 14px; background: #c0392b; border: none; position: relative; box-shadow: 0 1px 2px rgba(192,57,43,0.3); }
+.mlsw.rs::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 7px; height: 2px; background: white; border-radius: 1px; }
+.mlsw.rs::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 2px; height: 7px; background: white; border-radius: 1px; }
+.mlsw.kl { border-radius: 50%; width: 14px; height: 14px; background: #2980b9; border: none; position: relative; box-shadow: 0 1px 2px rgba(41,128,185,0.3); }
+.mlsw.kl::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 7px; height: 2px; background: white; border-radius: 1px; }
+.mlsw.kl::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 2px; height: 7px; background: white; border-radius: 1px; }
 .mlsw.l { width: 20px; height: 3px; border-radius: 2px; border: none; }
 .mlsw.o { background: transparent !important; border: 2px solid; }
 .mld { height: 1px; background: rgba(44,74,62,0.08); margin: 6px 0; }
@@ -618,8 +630,8 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
     <div class="method-legend">
       <div class="ml-title">📋 Legenda Peta</div>
       <div class="mls" style="margin-top:0">Fasilitas Kesehatan</div>
-      <div class="ml-item"><div class="ml-sw circle" style="background:#c0392b;border-color:rgba(255,255,255,.4)"></div><span>Rumah Sakit</span></div>
-      <div class="ml-item"><div class="ml-sw circle" style="background:#2980b9;border-color:rgba(255,255,255,.4)"></div><span>Klinik dan Farmasi</span></div>
+      <div class="ml-item"><div class="ml-sw rs-cross"></div><span>Rumah Sakit</span></div>
+      <div class="ml-item"><div class="ml-sw kl-cross"></div><span>Klinik dan Farmasi</span></div>
       <div class="ml-div"></div>
       <div class="mls">Zona Akses</div>
       <div class="ml-item"><div class="ml-sw" style="background:#6CC24A;opacity:.7"></div><span>Akses Dekat (≤ 1 km)</span></div>
@@ -686,8 +698,8 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
       </div>
       <div class="ml-body">
         <div class="mls">Fasilitas</div>
-        <div class="mli"><div class="mlsw c" style="background:#c0392b;border-color:rgba(255,255,255,.4)"></div><span>Rumah Sakit</span></div>
-        <div class="mli"><div class="mlsw c" style="background:#2980b9;border-color:rgba(255,255,255,.4)"></div><span>Klinik & Farmasi</span></div>
+        <div class="mli"><div class="mlsw rs"></div><span>Rumah Sakit</span></div>
+        <div class="mli"><div class="mlsw kl"></div><span>Klinik & Farmasi</span></div>
         <div class="mld"></div>
         <div class="mls">Zona Akses</div>
         <div class="mli"><div class="mlsw" style="background:#6CC24A;opacity:.7"></div><span>Dekat (≤ 1 km)</span></div>
