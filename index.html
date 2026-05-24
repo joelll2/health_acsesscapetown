@@ -748,8 +748,8 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 // With Landing Page
 // ═══════════════════════════════════════════
 
-const CENTER = [-33.95, 18.55];
-const ZOOM = 10;
+const CENTER = [-33.92, 18.52];
+const ZOOM = 11;
 const TYPE_MAP = {'1':'Clinic','2':'CDC/Clinic','4':'Private Hospital','5':'Public Hospital'};
 const CLS_MAP = {'1':'Clinic','2':'CDC/Clinic','3':'CDC','4':'District Hospital','5':'Mobile','6':'Private','7':'Psychiatric','8':'Regional','9':'Satellite','10':'Central','11':'Youth'};
 
@@ -926,8 +926,8 @@ async function loadLayers(){
     ly.addTo(map);ov[c.label]=ly;
   }
 
+  map.setView(CENTER, ZOOM);
   if(bndBounds&&bndBounds.isValid()){
-    map.fitBounds(bndBounds,{padding:[20,20],maxZoom:12});
     heroMap.fitBounds(bndBounds,{padding:[10,10]});
   }
 
@@ -955,8 +955,7 @@ window.addEventListener('scroll',()=>{document.getElementById('navbar').classLis
 
 // ── UI: Reset View ───────────────────────
 document.getElementById('btn-reset').onclick=()=>{
-  if(bndBounds&&bndBounds.isValid()) map.flyToBounds(bndBounds,{padding:[20,20],maxZoom:12,duration:1.2});
-  else map.flyTo(CENTER,ZOOM,{duration:1.2});
+  map.flyTo(CENTER,ZOOM,{duration:1.2});
 };
 
 // ── UI: Basemap Toggle ───────────────────
@@ -999,7 +998,7 @@ const mapObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isInter
   mapResized=true;
   setTimeout(()=>{
     map.invalidateSize();
-    if(bndBounds&&bndBounds.isValid()) map.fitBounds(bndBounds,{padding:[20,20],maxZoom:12});
+    map.setView(CENTER, ZOOM);
   },150);
   setTimeout(()=>{map.invalidateSize();},600);
 }});},{threshold:0.05});
