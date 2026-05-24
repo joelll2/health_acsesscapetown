@@ -334,6 +334,14 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 .leaflet-control-attribution a { color: var(--green) !important; }
 .leaflet-control-scale-line { background: rgba(245,240,232,0.85) !important; color: var(--text2) !important; border-color: var(--text3) !important; font-size: 10px !important; }
 
+/* Map Marker Icons */
+.mk { border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3); transition: transform 0.15s ease, box-shadow 0.15s ease; cursor: pointer; }
+.mk::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: var(--cw); height: var(--ch); background: white; border-radius: 1px; }
+.mk::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: var(--ch); height: var(--cw); background: white; border-radius: 1px; }
+.mk-rs { background: #c0392b; }
+.mk-kl { background: #2980b9; }
+.mk.hover { transform: scale(1.35); box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 999 !important; }
+
 /* Popup — Organic */
 .leaflet-popup-content-wrapper { background: rgba(245,240,232,0.96) !important; border: 1px solid rgba(44,74,62,0.1) !important; border-radius: var(--r2) !important; box-shadow: var(--shadow-lg) !important; color: var(--text) !important; backdrop-filter: blur(16px) !important; }
 .leaflet-popup-tip { background: rgba(245,240,232,0.96) !important; border: 1px solid rgba(44,74,62,0.1) !important; }
@@ -850,13 +858,24 @@ async function fetchGJ(f){try{const r=await fetch(f);if(!r.ok){console.warn('⚠
 const allFeat=[];
 let bndBounds=null;
 
-// ── Dynamic radius based on zoom ──────────
-function getRadius(zoom, base) {
-  if (zoom <= 10) return Math.max(2, base * 0.35);
-  if (zoom <= 11) return Math.max(2.5, base * 0.5);
-  if (zoom <= 12) return Math.max(3, base * 0.65);
-  if (zoom <= 13) return base * 0.8;
+// ── Dynamic marker size based on zoom ─────
+function getMarkerSize(zoom, isRS) {
+  const base = isRS ? 18 : 13;
+  if (zoom <= 10) return Math.max(6, base * 0.4);
+  if (zoom <= 11) return Math.max(8, base * 0.55);
+  if (zoom <= 12) return Math.max(10, base * 0.7);
+  if (zoom <= 13) return base * 0.85;
   return base;
+}
+
+function createMkIcon(key, zoom) {
+  const isRS = key === 'rumah_sakit';
+  const s = getMarkerSize(zoom, isRS);
+  const crossW = Math.max(2, s * 0.45);
+  const crossH = Math.max(1, s * 0.15);
+  const cls = isRS ? 'mk mk-rs' : 'mk mk-kl';
+  const html = `<div class="${cls}" style="width:${s}px;height:${s}px;--cw:${crossW}px;--ch:${crossH}px;"></div>`;
+  return L.divIcon({ html, className: '', iconSize: [s, s], iconAnchor: [s/2, s/2], popupAnchor: [0, -s/2] });
 }
 
 // ── Load Layers ──────────────────────────
@@ -874,11 +893,11 @@ async function loadLayers(){
       d.features.forEach(f=>{if(f.properties)allFeat.push({name:f.properties.NAME||f.properties.name||c.popup,addr:f.properties.ADR||'',type:c.key==='rumah_sakit'?'RS':'KL',ll:[f.geometry.coordinates[1],f.geometry.coordinates[0]]});});
       const curZoom=map.getZoom();
       ly=L.geoJSON(d,{
-        pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:getRadius(curZoom,c.mr||5),fillColor:c.mc||'#fff',color:'#fff',weight:1.5,opacity:1,fillOpacity:0.85}),
+        pointToLayer:(f,ll)=>L.marker(ll,{icon:createMkIcon(c.key,curZoom)}),
         onEachFeature:(f,l)=>{
           l.bindPopup(buildPopup(f,c),{maxWidth:320});
-          l.on('mouseover',function(){const z=map.getZoom();this.setStyle({radius:getRadius(z,c.mr||5)+2,weight:2.5,fillOpacity:1});});
-          l.on('mouseout',function(){const z=map.getZoom();this.setStyle({radius:getRadius(z,c.mr||5),weight:1.5,fillOpacity:0.85});});
+          l.on('mouseover',function(){ const el=this.getElement(); if(el){const mk=el.querySelector('.mk'); if(mk) mk.classList.add('hover');} });
+          l.on('mouseout',function(){ const el=this.getElement(); if(el){const mk=el.querySelector('.mk'); if(mk) mk.classList.remove('hover');} });
         },
       });
       pointLayers.push({layer:ly, config:c});
@@ -917,7 +936,7 @@ async function loadLayers(){
     const z=map.getZoom();
     pointLayers.forEach(({layer,config})=>{
       layer.eachLayer(m=>{
-        if(m.setRadius) m.setRadius(getRadius(z,config.mr||5));
+        if(m.setIcon) m.setIcon(createMkIcon(config.key, z));
       });
     });
   });
