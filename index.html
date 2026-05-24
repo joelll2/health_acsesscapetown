@@ -953,39 +953,49 @@ async function loadLayers(){
   document.getElementById('tb-kl').textContent=kc;
 }
 
-// ── UI: Navbar auto-hide on map section ──
+// ── UI: Navbar auto-hide on content sections ──
 const navEl=document.getElementById('navbar');
 const trigEl=document.createElement('div');
 trigEl.className='nav-trigger';
 document.body.appendChild(trigEl);
-let inMapSection=false;
+let inHideSection=false;
 let peekTimeout=null;
+const visibleSections=new Set();
 
-// Detect if map section is in view
+// Detect if any hide-section is in view
 const navObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
-    inMapSection=e.isIntersecting && e.intersectionRatio>0.5;
-    if(inMapSection){
-      navEl.classList.add('autohide');
-      trigEl.classList.add('active');
+    const id=e.target.id;
+    if(e.isIntersecting && e.intersectionRatio>0.3){
+      visibleSections.add(id);
     } else {
-      navEl.classList.remove('autohide','peek');
-      trigEl.classList.remove('active');
-      if(peekTimeout) clearTimeout(peekTimeout);
+      visibleSections.delete(id);
     }
   });
-},{threshold:[0,0.5,1]});
-navObs.observe(document.getElementById('peta'));
+  inHideSection=visibleSections.size>0;
+  if(inHideSection){
+    navEl.classList.add('autohide');
+    trigEl.classList.add('active');
+  } else {
+    navEl.classList.remove('autohide','peek');
+    trigEl.classList.remove('active');
+    if(peekTimeout) clearTimeout(peekTimeout);
+  }
+},{threshold:[0,0.3,0.5,1]});
+['features','methodology','peta'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) navObs.observe(el);
+});
 
 // Show navbar when cursor at top
 trigEl.addEventListener('mouseenter',()=>{
-  if(inMapSection){
+  if(inHideSection){
     navEl.classList.add('peek');
     if(peekTimeout) clearTimeout(peekTimeout);
   }
 });
 navEl.addEventListener('mouseleave',()=>{
-  if(inMapSection){
+  if(inHideSection){
     peekTimeout=setTimeout(()=>navEl.classList.remove('peek'),400);
   }
 });
