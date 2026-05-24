@@ -316,7 +316,8 @@ body { font-family: var(--fb); color: var(--text); background: var(--cream); -we
 .mbtn-p { background: var(--green); color: white; border-color: var(--green); }
 .mbtn-p:hover { background: var(--green-dark); }
 
-#main-map { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; }
+#main-map { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; width: 100%; }
+#main-map .leaflet-container { width: 100% !important; height: 100% !important; }
 .map-overlays { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; z-index: 800; pointer-events: none; }
 .map-overlays > * { pointer-events: auto; }
 
@@ -992,7 +993,15 @@ msIn.oninput=()=>{
 map.on('click',()=>msRe.classList.remove('show'));
 
 // ── Map resize fix on scroll to section ──
-const mapObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){setTimeout(()=>{map.invalidateSize();},200);}});},{threshold:0.1});
+let mapResized=false;
+const mapObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting&&!mapResized){
+  mapResized=true;
+  setTimeout(()=>{
+    map.invalidateSize();
+    if(bndBounds&&bndBounds.isValid()) map.fitBounds(bndBounds,{padding:[20,20],maxZoom:12});
+  },150);
+  setTimeout(()=>{map.invalidateSize();},600);
+}});},{threshold:0.05});
 mapObs.observe(document.getElementById('peta'));
 
 // ── Start ────────────────────────────────
